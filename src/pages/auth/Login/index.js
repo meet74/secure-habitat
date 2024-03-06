@@ -14,25 +14,52 @@ import React, { useState } from "react";
 import { Colors } from "../../../constant/Colors";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { screenNames } from "../../../navigator/screennames";
+import { auth } from "../../../config/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const { width, height } = Dimensions.get("screen");
 const LoginScreen = ({ navigation }) => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
-  const handleSignin = () => {
+  const [value, setValue] = React.useState({
+    email: "",
+    password: "",
+    error: "",
+  });
+
+  console.log(value);
+
+  const handleSignin = async () => {
     // Check if any field is empty
-    if (!email || !password) {
+    if (value.email === "" || value.password === "") {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
-    // Validation and signup logic here...
-    // For demonstration purposes, just navigate to the next screen
-    navigation.replace(screenNames.bottomflow);
+    try {
+      await signInWithEmailAndPassword(auth, value.email, value.password);
+     
+      navigation.replace(screenNames.bottomflow);
+    } catch (error) {
+      let errorMessage = "";
+      switch (error.code) {
+        case "auth/user-not-found":
+          errorMessage = "User not found. Please check your email.";
+          break;
+        case "auth/wrong-password":
+          errorMessage = "Invalid password. Please try again.";
+          break;
+        case "auth/invalid-email":
+          errorMessage = "Invalid email address.";
+          break;
+        default:
+          errorMessage = "An error occurred. Please try again later.";
+      }
+      setValue({
+        ...value,
+        error: errorMessage,
+      });
+    }
   };
 
   return (
@@ -45,8 +72,14 @@ const LoginScreen = ({ navigation }) => {
          <Text style={styles.logoTxt}>Secure Habitat</Text>
       </View>
 
-      <Text style = {styles.header}>Signup</Text>
+      <Text style = {styles.header}>Login</Text>
       {/* <Text style = {styles.paragraph}>Use Credentials to acees your account</Text> */}
+
+      {!!value.error && (
+          <View style={styles.error}>
+            <Text style={styles.errorText}>{value.error}</Text>
+          </View>
+        )}
       <View style={styles.signinContainer}>
        
         <View style={styles.inputDecoration}>
@@ -55,7 +88,7 @@ const LoginScreen = ({ navigation }) => {
           placeholderTextColor={Colors.buttonColor}
             placeholder="abc@email.com"
             style={styles.inputText}
-            onChangeText={setEmail}
+            onChangeText={(data) => setValue({...value,email:data})}
           />
         </View>
         <View style={styles.inputDecoration}>
@@ -65,7 +98,7 @@ const LoginScreen = ({ navigation }) => {
             placeholderTextColor={Colors.buttonColor}
             placeholder="Your password"
             style={styles.inputText}
-            onChangeText={setPassword}
+            onChangeText={(data) => setValue({...value,password:data})}
           />
         </View>
         <View style={styles.forgotpasscontainer}>
@@ -280,6 +313,13 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     alignItems:"center",
     justifyContent:"center"
+  },
+  error: {
+    marginTop: 10,
+    padding: 10,
+  },
+  errorText: {
+    color: "red",
   },
 });
 

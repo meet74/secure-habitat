@@ -14,6 +14,8 @@ import React, { useState } from "react";
 import { Colors } from "../../../constant/Colors";
 import { MaterialCommunityIcons, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { screenNames } from "../../../navigator/screennames";
+import {auth} from '../../../config/firebase'
+import {createUserWithEmailAndPassword} from 'firebase/auth'
 
 const { width, height } = Dimensions.get("screen");
 const SignUpPage = ({ navigation }) => {
@@ -23,18 +25,54 @@ const SignUpPage = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignin = () => {
+  const [value, setValue] = React.useState({
+    email: "",
+    fullName: "",
+    password: "",
+    confirmPassword: "",
+    error: "",
+  });
+
+  const handleSignUp = async () => {
     // Check if any field is empty
-    if (!email || !password) {
+    
+    if (
+      value.fullName === '' ||
+      value.email === ''||
+      value.password === ''
+    ) {
+     
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
-    // Validation and signup logic here...
-    // For demonstration purposes, just navigate to the next screen
-    navigation.replace(screenNames.bottomflow);
-  };
+    
 
+    try {
+      await createUserWithEmailAndPassword(auth, value.email, value.password);
+      navigation.replace(screenNames.login);
+    } catch (error) {
+      let errorMessage = "";
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          errorMessage = "Email already in use.";
+          break;
+        case "auth/weak-password":
+          errorMessage = "Password should be at least 6 characters.";
+          break;
+        case "auth/invalid-email":
+          errorMessage = "Invalid email address.";
+          break;
+        default:
+          errorMessage = "An error occurred. Please try again later.";
+      }
+      setValue({
+        ...value,
+        error: errorMessage,
+      });
+    }
+
+  };
   return (
     <SafeAreaView style={styles.safeareaview}>
       <View style={styles.container}>
@@ -56,7 +94,7 @@ const SignUpPage = ({ navigation }) => {
             placeholderTextColor={Colors.buttonColor}
             placeholder="Your name"
             style={styles.inputText}
-            onChangeText={setPassword}
+            onChangeText={(data) => setValue({...value,fullName:data})}
           />
         </View>
 
@@ -67,7 +105,7 @@ const SignUpPage = ({ navigation }) => {
           placeholderTextColor={Colors.buttonColor}
             placeholder="abc@email.com"
             style={styles.inputText}
-            onChangeText={setEmail}
+            onChangeText={(data) => setValue({...value,email:data})}
           />
         </View>
         
@@ -79,7 +117,7 @@ const SignUpPage = ({ navigation }) => {
             placeholderTextColor={Colors.buttonColor}
             placeholder="Your password"
             style={styles.inputText}
-            onChangeText={setPassword}
+            onChangeText={(data) => setValue({...value,password:data})}
           />
         </View>
 
@@ -103,7 +141,7 @@ const SignUpPage = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={handleSignin}>
+        <TouchableOpacity onPress={handleSignUp}>
           <View style={styles.buttonContainer}>
             <Text style={styles.buttonText}>Sign up</Text>
           </View>
@@ -128,7 +166,7 @@ const SignUpPage = ({ navigation }) => {
 
       <View style={styles.alreadyTextContainer}>
         <Text style={styles.alreadyText}>Already have an Account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("signup")}>
+        <TouchableOpacity onPress={() => navigation.navigate(screenNames.login)}>
           <Text style={styles.signUpText}>Sign in</Text>
         </TouchableOpacity>
       </View>
