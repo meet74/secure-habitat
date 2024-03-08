@@ -16,6 +16,8 @@ import ProfileScreen from "../pages/profile";
 import { tabBarOptions } from "../constant/TabBarOptions";
 import { Colors } from "../constant/Colors";
 import FavouriteScreen from "../pages/favourite";
+import PropertiesDetailScreen from "../pages/home/PropertiesDetail";
+import BookingConfirmPage from "../pages/home/PropertiesDetail/BookingConfirmPage";
 
 const Navigator = () => {
   const HomeNavigator = createNativeStackNavigator();
@@ -49,7 +51,9 @@ const Navigator = () => {
   const HomeNavFlow = () => {
     return (
       <HomeNavigator.Navigator screenOptions={{ headerShown: false }}>
-        <HomeNavigator.Screen name="home" component={HomeScreen} />
+        <HomeNavigator.Screen name={screenNames.home} component={HomeScreen} />
+        <HomeNavigator.Screen name={screenNames.propertiesDetail} component={PropertiesDetailScreen}/>
+        <HomeNavigator.Screen name={screenNames.confirmBookingPage} component={BookingConfirmPage}/>
       </HomeNavigator.Navigator>
     );
   };

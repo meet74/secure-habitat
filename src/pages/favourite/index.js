@@ -4,8 +4,11 @@ import { Colors } from "../../constant/Colors";
 import { dummyData } from "../../constant/DummyData";
 import Card from "../../components/Card";
 import {Swipeable,RectButton,GestureHandlerRootView} from 'react-native-gesture-handler'
+import { useSelector } from "react-redux";
 
-const FavouriteScreen = () => {
+const FavouriteScreen = (props) => {
+
+  const propsData = useSelector((state) => state.properties);
 
     const  renderRightActions = (progress, dragX) => {
         const trans = dragX.interpolate({
@@ -33,14 +36,14 @@ const FavouriteScreen = () => {
     <SafeAreaView style={styles.container}>
        < GestureHandlerRootView>
       <FlatList
-        data={dummyData}
+        data={propsData.props}
         ListHeaderComponent={() => {
          return  <Text style={styles.favoriteText}>Your Favourites</Text>;
         }}
         renderItem={({ item }) => {
           return (
             <Swipeable renderRightActions={renderRightActions}>
-          <Card item={item} />
+          <Card item={item} props={props}/>
           </Swipeable>
           )
         }}

@@ -11,5 +11,7 @@ export const screenNames = {
     favorite:"favorite",
     notification:"notification",
     profile:"profile",
-    bottomflow:"bottomflow"
+    bottomflow:"bottomflow",
+    propertiesDetail:"propertiesDetail",
+    confirmBookingPage:"confirmBookingPage"
 }

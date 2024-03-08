@@ -14,8 +14,9 @@ import React, { useState } from "react";
 import { Colors } from "../../../constant/Colors";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { screenNames } from "../../../navigator/screennames";
-import { auth } from "../../../config/firebase";
+import { auth, firestore } from "../../../config/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { collection, getDocs,setDoc } from 'firebase/firestore';
 
 const { width, height } = Dimensions.get("screen");
 const LoginScreen = ({ navigation }) => {
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
     justifyContent:"center"
   },
   error: {
-    marginTop: 10,
+    margin: 10,
     padding: 10,
   },
   errorText: {

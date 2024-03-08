@@ -1,9 +1,11 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image,TouchableOpacity } from "react-native";
 import React from "react";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import { Colors } from "../../constant/Colors";
 
-const GridCard = (props) => {
+import { screenNames } from "../../navigator/screennames";
+
+const GridCard = ({item,props,cardstyles}) => {
   
   const styles = StyleSheet.create({
   
@@ -17,8 +19,9 @@ const GridCard = (props) => {
       justifyContent: "center",
     },
     recommendationImage: {
-      width: props.cardstyles ? props.cardstyles.width : 250,
-      height: props.cardstyles ? props.cardstyles.height : 150,
+      width: cardstyles ? cardstyles.width : 250,
+      height: cardstyles ? cardstyles.height : 150,
+      ...cardstyles
     },
     recommendationPriceContainer: {
       flexDirection: "row",
@@ -28,14 +31,15 @@ const GridCard = (props) => {
     },
     recommendationPriceText: {
       fontWeight: "bold",
-      fontSize: props.cardstyles ? props.cardstyles.cardPriceSize:20,
+      fontSize: cardstyles ? cardstyles.cardPriceSize:20,
       color: Colors.buttonColor,
     },
     recommendationaddresstext: {
       marginVertical: 10,
       color: "white",
       fontWeight: "bold",
-      fontSize: props.cardstyles ? props.cardstyles.cardAddressSize:20,
+      fontSize: cardstyles ? cardstyles.cardAddressSize:20,
+      width:"90%"
     },
     locationContainer: {
       flexDirection: "row",
@@ -44,32 +48,34 @@ const GridCard = (props) => {
     cityText: {
       color: "grey",
       marginHorizontal:5,
-      fontSize: props.cardstyles ? props.cardstyles.cardCityText:20,
+      fontSize: cardstyles ? cardstyles.cardCityText:20,
       
     },
     locationText: {
       color: "white",
-      fontSize: props.cardstyles ? props.cardstyles.cardAddressSize:20,
+      fontSize: cardstyles ? cardstyles.cardAddressSize:20,
       
     },
   });
 
   
-
+ 
   return (
-    <View style={styles.recommendationContainer}>
-      <Image source={props.item.image} style={styles.recommendationImage} />
-      <Text style={styles.recommendationaddresstext}>{props.item.address}</Text>
+    <TouchableOpacity onPress={() => props.navigation.navigate(screenNames.propertiesDetail,{item})}>
+      <View style={styles.recommendationContainer}>
+      <Image source={{uri:item.image}} style={styles.recommendationImage} />
+      <Text style={styles.recommendationaddresstext}>{item.address}</Text>
       <View style={styles.locationContainer}>
         <Entypo name="location-pin" size={props.cardstyles ? props.cardstyles.iconSize:24} color={"white"} />
-        <Text style={styles.cityText}>{props.item.city}</Text>
+        <Text style={styles.cityText}>{item.city}</Text>
       </View>
 
       <View style={styles.recommendationPriceContainer}>
-        <Text style={styles.recommendationPriceText}>${props.item.price}</Text>
+        <Text style={styles.recommendationPriceText}>${item.price}</Text>
         <MaterialIcons name="favorite-border" size={ props.cardstyles ? props.cardstyles.iconSize:24} color="gray" />
       </View>
     </View>
+    </TouchableOpacity>
   );
 };
 

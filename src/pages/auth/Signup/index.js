@@ -9,18 +9,22 @@ import {
   Switch,
   TouchableOpacity,
   Alert,
+  ActivityIndicator
 } from "react-native";
 import React, { useState } from "react";
 import { Colors } from "../../../constant/Colors";
 import { MaterialCommunityIcons, MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { screenNames } from "../../../navigator/screennames";
-import {auth} from '../../../config/firebase'
+import {auth, firestore} from '../../../config/firebase'
 import {createUserWithEmailAndPassword} from 'firebase/auth'
+import {addDoc,collection,setDoc,doc} from 'firebase/firestore'
+import { dummyListData } from "../../../constant/DummyData";
 
 const { width, height } = Dimensions.get("screen");
 const SignUpPage = ({ navigation }) => {
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+    const [isLoading, setisLoading] = useState(false)
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,10 +36,39 @@ const SignUpPage = ({ navigation }) => {
     confirmPassword: "",
     error: "",
   });
+  const addDataToUserCollection = async () => {
+
+    const data = {
+      email:value.email,
+      fullName:value.fullName,
+      bookings:[],
+      favorites:[]
+    }
+    try {
+       const docRef = await addDoc(collection(firestore, "users"), data);
+       console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+       console.error("Error adding document: ", e);
+    }
+   };
+   
+
+   const addDataToDocument = async () => {
+    const documentId = "yn5uQyMELevIRyKmut0V"
+    try {
+       await setDoc(doc(firestore, "properties", documentId), dummyListData);
+       console.log("Document successfully written!");
+    } catch (e) {
+       console.error("Error writing document: ", e);
+    }
+   };
+
+   
+   
 
   const handleSignUp = async () => {
     // Check if any field is empty
-    
+    setisLoading(true)
     if (
       value.fullName === '' ||
       value.email === ''||
@@ -50,7 +83,10 @@ const SignUpPage = ({ navigation }) => {
 
     try {
       await createUserWithEmailAndPassword(auth, value.email, value.password);
+      await addDataToUserCollection();
+      
       navigation.replace(screenNames.login);
+      
     } catch (error) {
       let errorMessage = "";
       switch (error.code) {
@@ -66,6 +102,7 @@ const SignUpPage = ({ navigation }) => {
         default:
           errorMessage = "An error occurred. Please try again later.";
       }
+      setisLoading(false)
       setValue({
         ...value,
         error: errorMessage,
@@ -83,7 +120,12 @@ const SignUpPage = ({ navigation }) => {
          <Text style={styles.logoTxt}>Secure Habitat</Text>
       </View>
 
-      <Text style = {styles.header}>Login</Text>
+      <Text style = {styles.header}>Signup</Text>
+      {!!value.error && (
+          <View style={styles.error}>
+            <Text style={styles.errorText}>{value.error}</Text>
+          </View>
+        )}
       {/* <Text style = {styles.paragraph}>Use Credentials to acees your account</Text> */}
       <View style={styles.signinContainer}>
        
@@ -143,7 +185,7 @@ const SignUpPage = ({ navigation }) => {
 
         <TouchableOpacity onPress={handleSignUp}>
           <View style={styles.buttonContainer}>
-            <Text style={styles.buttonText}>Sign up</Text>
+            {isLoading ? <ActivityIndicator/>: <Text style={styles.buttonText}>Sign up</Text>} 
           </View>
         </TouchableOpacity>
 
@@ -154,7 +196,7 @@ const SignUpPage = ({ navigation }) => {
         </View>
       </View>
 
-      <TouchableOpacity >
+      <TouchableOpacity onPress={addDataToDocument}>
         <View style={styles.googleButtonContainer}>
           <Image
             source={require("../../../../assets/images/google-logo.png")}
@@ -323,7 +365,14 @@ const styles = StyleSheet.create({
   },
   rememberme:{
     color:"white"
-  }
+  },
+  error: {
+    marginTop: 10,
+    padding: 10,
+  },
+  errorText: {
+    color: "red",
+  },
 });
 
 export default SignUpPage;

@@ -1,24 +1,28 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image,TouchableOpacity } from "react-native";
 import React from "react";
 import { Entypo } from "@expo/vector-icons";
 import { Colors } from "../../constant/Colors";
+import { dummyData } from "../../constant/DummyData";
+import { screenNames } from "../../navigator/screennames";
 
 
-const Card = (props) => {
+const Card = ({item = dummyData[0], props}) => {
   return (
-    <View style={styles.mainCardContainer}>
-      <Image source={props.item.image} style={styles.mainCardImage} />
+   <TouchableOpacity onPress={() => props.navigation.navigate(screenNames.propertiesDetail,{item})}>
+     <View style={styles.mainCardContainer}>
+      <Image source={{uri:item.image}} style={styles.mainCardImage} />
       <View style={{ marginHorizontal: 10 }}>
-        <Text style={styles.mainCardaddresstext}>{props.item.address}</Text>
+        <Text style={styles.mainCardaddresstext}>{item.address}</Text>
         <View style={styles.locationContainer}>
           <Entypo name="location-pin" size={24} color={"white"} />
-          <Text style={styles.cityText}>{props.item.city}</Text>
+          <Text style={styles.cityText}>{item.city}</Text>
         </View>
         <View style={styles.mainCardPriceContainer}>
-          <Text style={styles.mainCardPriceText}>${props.item.price}</Text>
+          <Text style={styles.mainCardPriceText}>${item.price}</Text>
         </View>
       </View>
     </View>
+   </TouchableOpacity>
   );
 };
 
@@ -52,9 +56,10 @@ const styles = StyleSheet.create({
 
   mainCardaddresstext: {
     marginVertical: 10,
+    width:"100%",
     color: "white",
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 17,
   },
   locationContainer: {
     flexDirection: "row",
