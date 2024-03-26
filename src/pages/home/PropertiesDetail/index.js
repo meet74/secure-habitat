@@ -14,7 +14,7 @@ import { Colors } from "../../../constant/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { screenNames } from "../../../navigator/screennames";
 import { useDispatch, useSelector } from "react-redux";
-import { cancel_book, set_book } from "../../../store/action/user";
+import { add_notifications, cancel_book, set_book } from "../../../store/action/user";
 import { addDoc, arrayUnion, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { firestore } from "../../../config/firebase";
 
@@ -88,7 +88,9 @@ const PropertiesDetailScreen = (props) => {
   const userData = useSelector(state=>state.user)
 
   const isPropertyBooked = () =>  userData.user.mybooks.some(data=>data.id === item.id)
-
+  const notificationFun = (title, type) => { return {
+    message:`Your appointment for ${title} is ${type}`
+  }}
   const handleCancel = async() => {
     const userArrRef = doc(firestore, "users", "usersArr");
     const userArrSnap = await getDoc(userArrRef);
@@ -103,14 +105,16 @@ const PropertiesDetailScreen = (props) => {
       console.log("user"+tempUser);
       const oldBookings = [...tempUser.bookings]
       const newBookings = oldBookings.filter(data=>data.id !== item.id)
-      
+      const oldNotificaitons = [...tempUser.notifications]
+      oldNotificaitons.push(notificationFun(item.address,"booked"))
       console.log("book"+newBookings.length );
       const newUserData = {
        ...tempUser,
-       bookings:newBookings
+       bookings:newBookings,
+       notifications:oldNotificaitons
       }
       dispatch(cancel_book(newBookings))
-      
+      dispatch(add_notifications(notificationFun(item.address,"cancelled")))
       const filteredArr = userDataArr.filter(data=>data.uid !== userData.user.id);
       console.log("filter"+filteredArr);
       filteredArr.push(newUserData)
@@ -132,7 +136,8 @@ const PropertiesDetailScreen = (props) => {
     
     const userArrRef = doc(firestore, "users", "usersArr");
     const userArrSnap = await getDoc(userArrRef);
-
+    dispatch(add_notifications(notificationFun(item.address,"booked")))
+    
     if (userArrSnap.exists()) {
       // Update the userArr document's bookings array with the new booking
       const userDataArr = userArrSnap.data().users
@@ -143,10 +148,12 @@ const PropertiesDetailScreen = (props) => {
       console.log(tempUser);
       const oldBookings = [...tempUser.bookings]
       oldBookings.push(item)
-     
+      const oldNotificaitons = [...tempUser.notifications]
+      oldNotificaitons.push(notificationFun(item.address,"booked"))
       const newUserData = {
        ...tempUser,
-       bookings:oldBookings
+       bookings:oldBookings,
+       notifications:oldNotificaitons
       }
       //console.log("new"+newUserData.bookings[0].address);
       const filteredArr = userDataArr.filter(data=>data.uid !== userData.user.id);

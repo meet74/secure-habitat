@@ -16,8 +16,12 @@ import {
   GestureHandlerRootView,
 } from "react-native-gesture-handler";
 import NotificationCard from "../../components/NotificationCard";
+import { useSelector } from "react-redux";
 
 const NotificationScreen = () => {
+
+  const userData = useSelector(state=>state.user)
+  console.log(userData.user.mynoti);
   const renderRightActions = (progress, dragX) => {
     const trans = dragX.interpolate({
       inputRange: [0, 50, 100, 101],
@@ -44,14 +48,15 @@ const NotificationScreen = () => {
     <SafeAreaView style={styles.container}>
       <GestureHandlerRootView>
         <FlatList
-          data={dummyData}
+          data={userData.user.mynoti}
           ListHeaderComponent={() => {
             return <Text style={styles.favoriteText}>Notifications</Text>;
           }}
           renderItem={({ item }) => {
+            console.log(item);
             return (
               <Swipeable renderRightActions={renderRightActions}>
-               <NotificationCard time={"2 days ago"} title={"You can come to take a look tommorow"} message={""}/>
+               <NotificationCard time={"2 days ago"} title={item.message} message={""}/>
               </Swipeable>
             );
           }}

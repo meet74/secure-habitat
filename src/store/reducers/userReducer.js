@@ -1,4 +1,5 @@
 import {
+  ADD_NOTIFICATIONS,
   CANCEL_BOOK,
   DELETE_PROPS,
   GET_FAVORITE,
@@ -73,7 +74,7 @@ export default (state = initialState, action) => {
 
     case SET_BOOKINGS:
       const oldmybooks = [...state.user.mybooks];
-      const newmybooks = oldmybooks.push(action.props);
+    
       oldmybooks.push(action.props)
       return {
         user: {
@@ -108,6 +109,16 @@ export default (state = initialState, action) => {
         },
       };
 
+    case ADD_NOTIFICATIONS:
+      const old_notificaitons = [...state.user.mynoti];
+    
+      old_notificaitons.push(action.notification)
+      return{
+        user:{
+          ...state.user,
+          mynoti:old_notificaitons
+        }
+      }
     case SIGN_OUT:
       return {
         user: {
