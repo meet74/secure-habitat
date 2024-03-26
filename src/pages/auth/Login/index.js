@@ -16,19 +16,19 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { screenNames } from "../../../navigator/screennames";
 import { auth, firestore } from "../../../config/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { collection, getDocs,setDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
+import { useDispatch } from "react-redux";
+import { set_user } from "../../../store/action/user";
 
 const { width, height } = Dimensions.get("screen");
 const LoginScreen = ({ navigation }) => {
-
-
   const [value, setValue] = React.useState({
     email: "",
     password: "",
     error: "",
   });
 
-  console.log(value);
+ const dispatch = useDispatch()
 
   const handleSignin = async () => {
     // Check if any field is empty
@@ -36,11 +36,33 @@ const LoginScreen = ({ navigation }) => {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
+   
 
     try {
-      await signInWithEmailAndPassword(auth, value.email, value.password);
-     
-      navigation.replace(screenNames.bottomflow);
+      const userCred = await signInWithEmailAndPassword(auth, value.email, value.password);
+      try {
+        // Reference the document
+        const docRef = doc(firestore, "users", "usersArr");
+    
+        // Retrieve the document
+        const docSnap = await getDoc(docRef);
+    
+        if (docSnap.exists()) {
+          console.log("Document data:", docSnap.data());
+          const userArr = docSnap.data().users
+          const currentUser = userArr.find(u=>u.uid === userCred.user.uid)
+          console.log(currentUser);
+          dispatch(set_user(currentUser))
+        } else {
+          console.log("No such document!");
+          return null;
+        }
+     } catch (error) {
+        console.error("Error getting document:", error);
+        return null;
+     }
+   
+       navigation.replace(screenNames.bottomflow);
     } catch (error) {
       let errorMessage = "";
       switch (error.code) {
@@ -60,46 +82,53 @@ const LoginScreen = ({ navigation }) => {
         ...value,
         error: errorMessage,
       });
-    }
+     }
   };
 
   return (
     <SafeAreaView style={styles.safeareaview}>
       <View style={styles.container}>
-      <Image
+        <Image
           source={require("../../../../assets/images/logo.png")}
           style={styles.logoImg}
         />
-         <Text style={styles.logoTxt}>Secure Habitat</Text>
+        <Text style={styles.logoTxt}>Secure Habitat</Text>
       </View>
 
-      <Text style = {styles.header}>Login</Text>
+      <Text style={styles.header}>Login</Text>
       {/* <Text style = {styles.paragraph}>Use Credentials to acees your account</Text> */}
 
       {!!value.error && (
-          <View style={styles.error}>
-            <Text style={styles.errorText}>{value.error}</Text>
-          </View>
-        )}
+        <View style={styles.error}>
+          <Text style={styles.errorText}>{value.error}</Text>
+        </View>
+      )}
       <View style={styles.signinContainer}>
-       
         <View style={styles.inputDecoration}>
-          <MaterialCommunityIcons name="email-outline" size={24} color={Colors.buttonColor} />
+          <MaterialCommunityIcons
+            name="email-outline"
+            size={24}
+            color={Colors.buttonColor}
+          />
           <TextInput
-          placeholderTextColor={Colors.buttonColor}
+            placeholderTextColor={Colors.buttonColor}
             placeholder="abc@email.com"
             style={styles.inputText}
-            onChangeText={(data) => setValue({...value,email:data})}
+            onChangeText={(data) => setValue({ ...value, email: data })}
           />
         </View>
         <View style={styles.inputDecoration}>
-          <MaterialIcons name="lock-outline" size={24} color={Colors.buttonColor} />
+          <MaterialIcons
+            name="lock-outline"
+            size={24}
+            color={Colors.buttonColor}
+          />
           <TextInput
             secureTextEntry={true}
             placeholderTextColor={Colors.buttonColor}
             placeholder="Your password"
             style={styles.inputText}
-            onChangeText={(data) => setValue({...value,password:data})}
+            onChangeText={(data) => setValue({ ...value, password: data })}
           />
         </View>
         <View style={styles.forgotpasscontainer}>
@@ -127,10 +156,10 @@ const LoginScreen = ({ navigation }) => {
           </View>
         </TouchableOpacity>
 
-        <View style = {styles.lineContainer}>
-            <View style = {styles.line}/>
-            <Text style = {styles.paragraph}>or Login With </Text>
-            <View style = {styles.line}/>
+        <View style={styles.lineContainer}>
+          <View style={styles.line} />
+          <Text style={styles.paragraph}>or Login With </Text>
+          <View style={styles.line} />
         </View>
       </View>
 
@@ -146,7 +175,9 @@ const LoginScreen = ({ navigation }) => {
 
       <View style={styles.alreadyTextContainer}>
         <Text style={styles.alreadyText}>Don't have an Account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate(screenNames.signup)}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate(screenNames.signup)}
+        >
           <Text style={styles.signUpText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
@@ -173,48 +204,45 @@ const styles = StyleSheet.create({
   logoTxt: {
     fontSize: 35,
     color: "white",
-    margin:20,
+    margin: 20,
     letterSpacing: 1,
   },
   inputDecoration: {
-    
     margin: 10,
-    backgroundColor:"rgba(37, 176, 243,0.1)",
+    backgroundColor: "rgba(37, 176, 243,0.1)",
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
     marginVertical: 10,
   },
-  line:{
-    borderWidth:0.5,
-    borderColor:"gray",
-    width:width*0.3,
-    margin:10
+  line: {
+    borderWidth: 0.5,
+    borderColor: "gray",
+    width: width * 0.3,
+    margin: 10,
   },
-  lineContainer:{
-    flexDirection:"row",
-    alignItems:"center",
-    justifyContent:"center"
+  lineContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   header: {
     fontSize: 25,
-    
-    marginTop: 20,
-    marginLeft:30,
-    color: "white",
 
+    marginTop: 20,
+    marginLeft: 30,
+    color: "white",
   },
   paragraph: {
     marginTop: 5,
-    marginLeft:20,
+    marginLeft: 20,
     color: "gray",
-
   },
   inputText: {
     padding: 10,
     flex: 1,
-    color:Colors.buttonColor
+    color: Colors.buttonColor,
   },
   signinText: {
     fontSize: 24,
@@ -288,7 +316,7 @@ const styles = StyleSheet.create({
   },
   alreadyText: {
     marginHorizontal: 10,
-    color:"white"
+    color: "white",
   },
 
   signUpText: {
@@ -299,21 +327,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     margin: 25,
-    
   },
-  rememberme:{
-    color:"white"
+  rememberme: {
+    color: "white",
   },
-  line:{
-    borderWidth:0.5,
-    borderColor:"gray",
-    width:width*0.2,
-    margin:5
+  line: {
+    borderWidth: 0.5,
+    borderColor: "gray",
+    width: width * 0.2,
+    margin: 5,
   },
-  lineContainer:{
-    flexDirection:"row",
-    alignItems:"center",
-    justifyContent:"center"
+  lineContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   error: {
     margin: 10,

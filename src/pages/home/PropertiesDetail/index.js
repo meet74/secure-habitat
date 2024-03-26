@@ -7,17 +7,20 @@ import {
   Dimensions,
   FlatList,
   ScrollView,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native";
 import React from "react";
 import { Colors } from "../../../constant/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { screenNames } from "../../../navigator/screennames";
+import { useDispatch, useSelector } from "react-redux";
+import { cancel_book, set_book } from "../../../store/action/user";
+import { addDoc, arrayUnion, collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { firestore } from "../../../config/firebase";
 
 const { width, height } = Dimensions.get("screen");
 
 const PropertiesDetailScreen = (props) => {
-    
   const { item } = props.route.params;
   const styles = StyleSheet.create({
     container: {
@@ -80,6 +83,89 @@ const PropertiesDetailScreen = (props) => {
       letterSpacing: 1,
     },
   });
+
+  const dispatch = useDispatch();
+  const userData = useSelector(state=>state.user)
+
+  const isPropertyBooked = () =>  userData.user.mybooks.some(data=>data.id === item.id)
+
+  const handleCancel = async() => {
+    const userArrRef = doc(firestore, "users", "usersArr");
+    const userArrSnap = await getDoc(userArrRef);
+
+    if (userArrSnap.exists()) {
+      // Update the userArr document's bookings array with the new booking
+      const userDataArr = userArrSnap.data().users
+      //console.log(userData.user.id);
+      const particularUser = userDataArr.find(u=>u.uid === userData.user.id)
+      //console.log("d"+particularUser);
+      const tempUser = { ...particularUser}
+      console.log("user"+tempUser);
+      const oldBookings = [...tempUser.bookings]
+      const newBookings = oldBookings.filter(data=>data.id !== item.id)
+      
+      console.log("book"+newBookings.length );
+      const newUserData = {
+       ...tempUser,
+       bookings:newBookings
+      }
+      dispatch(cancel_book(newBookings))
+      
+      const filteredArr = userDataArr.filter(data=>data.uid !== userData.user.id);
+      console.log("filter"+filteredArr);
+      filteredArr.push(newUserData)
+      //console.log("filterArr"+filteredArr[0].bookings[0);
+      await updateDoc(userArrRef, {
+          users: filteredArr
+      });
+      console.log("Booking cancelled successfully.");
+  } else {
+      console.log("userArr document does not exist.");
+  }
+
+
+   
+    props.navigation.navigate(screenNames.confirmBookingPage);
+  }
+
+  const handleBooking = async() => {
+    
+    const userArrRef = doc(firestore, "users", "usersArr");
+    const userArrSnap = await getDoc(userArrRef);
+
+    if (userArrSnap.exists()) {
+      // Update the userArr document's bookings array with the new booking
+      const userDataArr = userArrSnap.data().users
+      //console.log(userData.user.id);
+      const particularUser = userDataArr.find(u=>u.uid === userData.user.id)
+      //console.log("d"+particularUser);
+      const tempUser = { ...particularUser}
+      console.log(tempUser);
+      const oldBookings = [...tempUser.bookings]
+      oldBookings.push(item)
+     
+      const newUserData = {
+       ...tempUser,
+       bookings:oldBookings
+      }
+      //console.log("new"+newUserData.bookings[0].address);
+      const filteredArr = userDataArr.filter(data=>data.uid !== userData.user.id);
+      console.log("filter"+filteredArr);
+      filteredArr.push(newUserData)
+      //console.log("filterArr"+filteredArr[0].bookings[0].address);
+      
+      await updateDoc(userArrRef, {
+          users: filteredArr
+      });
+      console.log("Booking added successfully.");
+  } else {
+      console.log("userArr document does not exist.");
+  }
+
+
+    dispatch(set_book(item))
+    props.navigation.navigate(screenNames.confirmBookingPage);
+  };
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -92,9 +178,7 @@ const PropertiesDetailScreen = (props) => {
         <View>
           <Text style={styles.cardaddresstext}>{item.title}</Text>
           <Text style={styles.descriptionText}>Description</Text>
-          <Text style={styles.description}>
-            {item.description}
-          </Text>
+          <Text style={styles.description}>{item.description}</Text>
         </View>
 
         <View>
@@ -114,8 +198,8 @@ const PropertiesDetailScreen = (props) => {
         </View>
       </ScrollView>
 
-      <TouchableOpacity style={styles.btnContainer} onPress={() => props.navigation.navigate(screenNames.confirmBookingPage)}>
-        <Text style={styles.btnText}>Book for appointment</Text>
+      <TouchableOpacity style={styles.btnContainer} onPress={isPropertyBooked() ? handleCancel: handleBooking}>
+        <Text style={styles.btnText}>{isPropertyBooked() ? "Cancel appointment":"Book for appointment" }</Text>
       </TouchableOpacity>
     </View>
   );

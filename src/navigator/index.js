@@ -15,15 +15,22 @@ import NotificationScreen from "../pages/notification";
 import ProfileScreen from "../pages/profile";
 import { tabBarOptions } from "../constant/TabBarOptions";
 import { Colors } from "../constant/Colors";
-import FavouriteScreen from "../pages/favourite";
 import PropertiesDetailScreen from "../pages/home/PropertiesDetail";
 import BookingConfirmPage from "../pages/home/PropertiesDetail/BookingConfirmPage";
+import PropertiesScreen from "../pages/properties";
+import AddPropertyScreen from "../pages/properties/addproperties";
+import StripeApp from "../pages/properties/paymentPage";
+import UpdatePropertyScreen from "../pages/properties/updateProperties";
+import { useSelector } from "react-redux";
 
 const Navigator = () => {
   const HomeNavigator = createNativeStackNavigator();
   const AuthNavigator = createNativeStackNavigator();
   const MainNavigator = createNativeStackNavigator();
   const BottomNavigator = createBottomTabNavigator();
+  const PropsNavigator = createNativeStackNavigator();
+
+  const userData = useSelector(state=>state.user)
 
   const AuthNavFlow = () => {
     return (
@@ -58,6 +65,17 @@ const Navigator = () => {
     );
   };
 
+  const PropsNavFlow = () => {
+    return(
+      <PropsNavigator.Navigator screenOptions={{ headerShown: false }}>
+        <PropsNavigator.Screen name={screenNames.properties} component={PropertiesScreen}/>
+        <PropsNavigator.Screen name={screenNames.addPropertyPage} component={AddPropertyScreen}/>
+        <PropsNavigator.Screen name={screenNames.paymentPage} component={StripeApp}/>
+        <PropsNavigator.Screen name={screenNames.updatePage} component={UpdatePropertyScreen}/>
+      </PropsNavigator.Navigator>
+    )
+  }
+
   const BottomFlow = () => {
     return (
       <BottomNavigator.Navigator
@@ -77,9 +95,9 @@ const Navigator = () => {
         />
 
         <BottomNavigator.Screen
-          options={tabBarOptions.Favourite}
-          name={screenNames.favorite}
-          component={FavouriteScreen}
+          options={tabBarOptions.Properties}
+          name={screenNames.propsFlow}
+          component={PropsNavFlow}
         />
         <BottomNavigator.Screen
           options={tabBarOptions.Notification}
@@ -96,16 +114,30 @@ const Navigator = () => {
   };
   return (
     <NavigationContainer>
+     {
+      userData.user.id!==null? 
       <MainNavigator.Navigator screenOptions={{ headerShown: false }}>
-        <MainNavigator.Screen
-          name={screenNames.authflow}
-          component={AuthNavFlow}
-        />
-        <MainNavigator.Screen
-          name={screenNames.bottomflow}
-          component={BottomFlow}
-        />
-      </MainNavigator.Navigator>
+      
+      <MainNavigator.Screen
+        name={screenNames.bottomflow}
+        component={BottomFlow}
+      />
+      <MainNavigator.Screen
+        name={screenNames.authflow}
+        component={AuthNavFlow}
+      />
+    </MainNavigator.Navigator>
+      : <MainNavigator.Navigator screenOptions={{ headerShown: false }}>
+      <MainNavigator.Screen
+        name={screenNames.authflow}
+        component={AuthNavFlow}
+      />
+      <MainNavigator.Screen
+        name={screenNames.bottomflow}
+        component={BottomFlow}
+      />
+    </MainNavigator.Navigator>
+     }
     </NavigationContainer>
   );
 };

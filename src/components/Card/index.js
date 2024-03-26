@@ -6,9 +6,9 @@ import { dummyData } from "../../constant/DummyData";
 import { screenNames } from "../../navigator/screennames";
 
 
-const Card = ({item = dummyData[0], props}) => {
+const Card = ({item = dummyData[0], props,screen = screenNames.propertiesDetail}) => {
   return (
-   <TouchableOpacity onPress={() => props.navigation.navigate(screenNames.propertiesDetail,{item})}>
+   <TouchableOpacity onPress={() => props.navigation.navigate(screen,{item})}>
      <View style={styles.mainCardContainer}>
       <Image source={{uri:item.image}} style={styles.mainCardImage} />
       <View style={{ marginHorizontal: 10 }}>

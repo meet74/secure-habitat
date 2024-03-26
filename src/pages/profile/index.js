@@ -1,13 +1,25 @@
-import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity,Dimensions } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity,Dimensions,ScrollView } from "react-native";
 import React from "react";
 import { Colors } from "../../constant/Colors";
 import { screenNames } from "../../navigator/screennames";
+import {  useDispatch, useSelector } from "react-redux";
+import { signOutUser } from "../../store/action/user";
+import Card from "../../components/Card";
+
 
 const { width, height } = Dimensions.get("screen");
 
 const ProfileScreen = (props) => {
+  const userData = useSelector(state => state.user)
+  console.log(userData);
+  const dispatch = useDispatch()
+  const handleSignout = () =>{
+    dispatch(signOutUser())
+    props.navigation.replace(screenNames.authflow)
+  }
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView>
       <Text style={styles.headerText}>Your Profile</Text>
       <View style={styles.profile_container}>
         <Image
@@ -19,7 +31,7 @@ const ProfileScreen = (props) => {
             resizeMode: "cover",
           }}
         />
-        <Text style={styles.profile_name}>Micheal Dam</Text>
+        <Text style={styles.profile_name}> {userData.user.id ? userData.user.name : "Shreehari"}</Text>
       </View>
       <Text style={styles.descriptionText}>Description</Text>
       <Text style = {styles.description}>
@@ -28,16 +40,23 @@ const ProfileScreen = (props) => {
         learner, I'm always diving into new technologies and concepts, eager to
         expand my knowledge and skill set.
       </Text>
-
+      <Text style = {styles.descriptionText}>My Bookings</Text>
+      {
+       userData.user.mybooks.length ?
+       userData.user.mybooks.map((item,index) => {
+        return <Card item={item} props={props} key={index}/>
+      }):
+      <Text style = {styles.nobookingsText}>No Bookings yet</Text>
+      }
       <TouchableOpacity
-          onPress={() => props.navigation.replace(screenNames.authflow)}
+          onPress={handleSignout}
         >
           <View style={styles.buttonContainer}>
             <Text style={styles.buttonText}>Sign Out</Text>
           </View>
         </TouchableOpacity>
 
-
+        </ScrollView>
     </SafeAreaView>
   );
 };
@@ -93,5 +112,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     letterSpacing: 1,
   },
+  nobookingsText:{
+    color: Colors.buttonColor,
+    fontSize: 16,
+    margin:30,
+    fontStyle:"italic",
+    alignSelf:"center"
+  }
 });
 export default ProfileScreen;

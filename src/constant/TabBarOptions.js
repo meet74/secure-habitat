@@ -39,18 +39,16 @@ export const tabBarOptions = {
       );
     },
   },
-  Favourite: {
+  Properties: {
     headerShown: false,
 
-    tabBarLabel: "Favourite",
+    tabBarLabel: "My Properties",
 
     tabBarActiveTintColor: Colors.buttonColor,
 
     tabBarIcon: (tabInfo) => {
       return (
-        <MaterialIcons
-          name="favorite-border"
-          size={24}
+        <MaterialIcons name="add-home-work" size={24} 
           color={tabInfo.focused ? Colors.buttonColor : "#8e8e93"}
         />
       );

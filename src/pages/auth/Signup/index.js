@@ -9,25 +9,24 @@ import {
   Switch,
   TouchableOpacity,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { Colors } from "../../../constant/Colors";
-import { MaterialCommunityIcons, MaterialIcons, FontAwesome } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  MaterialIcons,
+  FontAwesome,
+} from "@expo/vector-icons";
 import { screenNames } from "../../../navigator/screennames";
-import {auth, firestore} from '../../../config/firebase'
-import {createUserWithEmailAndPassword} from 'firebase/auth'
-import {addDoc,collection,setDoc,doc} from 'firebase/firestore'
+import { auth, firestore } from "../../../config/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { addDoc, collection, setDoc, doc, getDoc, getDocs, updateDoc, arrayUnion } from "firebase/firestore";
 import { dummyListData } from "../../../constant/DummyData";
 
 const { width, height } = Dimensions.get("screen");
 const SignUpPage = ({ navigation }) => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
-    const [isLoading, setisLoading] = useState(false)
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [isLoading, setisLoading] = useState(false);
 
   const [value, setValue] = React.useState({
     email: "",
@@ -36,57 +35,59 @@ const SignUpPage = ({ navigation }) => {
     confirmPassword: "",
     error: "",
   });
-  const addDataToUserCollection = async () => {
-
+  const addDataToUserCollection = async (uid) => {
     const data = {
-      email:value.email,
-      fullName:value.fullName,
-      bookings:[],
-      favorites:[]
-    }
-    try {
-       const docRef = await addDoc(collection(firestore, "users"), data);
-       console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-       console.error("Error adding document: ", e);
-    }
-   };
-   
+      email: value.email,
+      fullName: value.fullName,
+      bookings: [],
+      favorites: [],
+      properties: [],
+      uid,
+    };
 
-   const addDataToDocument = async () => {
-    const documentId = "yn5uQyMELevIRyKmut0V"
-    try {
-       await setDoc(doc(firestore, "properties", documentId), dummyListData);
-       console.log("Document successfully written!");
-    } catch (e) {
-       console.error("Error writing document: ", e);
-    }
-   };
+    const docId = "usersArr";
 
-   
-   
+    try {
+      const userDocRef = doc(firestore, "users", docId);
+      console.log("User Doc Ref:", userDocRef.id);
+
+      await updateDoc(userDocRef, {
+        users: arrayUnion(data)
+    });
+
+  } catch (e) {
+      console.error("Error retrieving document: ", e);
+  }
+}
+
+  const addDataToDocument = async () => {
+    const documentId = "yn5uQyMELevIRyKmut0V";
+    try {
+      await setDoc(doc(firestore, "properties", documentId), dummyListData);
+      console.log("Document successfully written!");
+    } catch (e) {
+      console.error("Error writing document: ", e);
+    }
+  };
 
   const handleSignUp = async () => {
     // Check if any field is empty
-    setisLoading(true)
-    if (
-      value.fullName === '' ||
-      value.email === ''||
-      value.password === ''
-    ) {
-     
+    setisLoading(true);
+    if (value.fullName === "" || value.email === "" || value.password === "") {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
-    
-
+   
     try {
-      await createUserWithEmailAndPassword(auth, value.email, value.password);
-      await addDataToUserCollection();
-      
+      const userCred = await createUserWithEmailAndPassword(
+        auth,
+        value.email,
+        value.password
+      );
+      await addDataToUserCollection(userCred.user.uid);
+
       navigation.replace(screenNames.login);
-      
     } catch (error) {
       let errorMessage = "";
       switch (error.code) {
@@ -102,67 +103,69 @@ const SignUpPage = ({ navigation }) => {
         default:
           errorMessage = "An error occurred. Please try again later.";
       }
-      setisLoading(false)
+      setisLoading(false);
       setValue({
         ...value,
         error: errorMessage,
       });
     }
-
   };
   return (
     <SafeAreaView style={styles.safeareaview}>
       <View style={styles.container}>
-      <Image
+        <Image
           source={require("../../../../assets/images/logo.png")}
           style={styles.logoImg}
         />
-         <Text style={styles.logoTxt}>Secure Habitat</Text>
+        <Text style={styles.logoTxt}>Secure Habitat</Text>
       </View>
 
-      <Text style = {styles.header}>Signup</Text>
+      <Text style={styles.header}>Signup</Text>
       {!!value.error && (
-          <View style={styles.error}>
-            <Text style={styles.errorText}>{value.error}</Text>
-          </View>
-        )}
+        <View style={styles.error}>
+          <Text style={styles.errorText}>{value.error}</Text>
+        </View>
+      )}
       {/* <Text style = {styles.paragraph}>Use Credentials to acees your account</Text> */}
       <View style={styles.signinContainer}>
-       
-      <View style={styles.inputDecoration}>
-      <FontAwesome name="user" size={24} color={Colors.buttonColor} />
+        <View style={styles.inputDecoration}>
+          <FontAwesome name="user" size={24} color={Colors.buttonColor} />
           <TextInput
-            
             placeholderTextColor={Colors.buttonColor}
             placeholder="Your name"
             style={styles.inputText}
-            onChangeText={(data) => setValue({...value,fullName:data})}
+            onChangeText={(data) => setValue({ ...value, fullName: data })}
           />
         </View>
 
-
         <View style={styles.inputDecoration}>
-          <MaterialCommunityIcons name="email-outline" size={24} color={Colors.buttonColor} />
+          <MaterialCommunityIcons
+            name="email-outline"
+            size={24}
+            color={Colors.buttonColor}
+          />
           <TextInput
-          placeholderTextColor={Colors.buttonColor}
+            placeholderTextColor={Colors.buttonColor}
             placeholder="abc@email.com"
             style={styles.inputText}
-            onChangeText={(data) => setValue({...value,email:data})}
+            onChangeText={(data) => setValue({ ...value, email: data })}
           />
         </View>
-        
 
         <View style={styles.inputDecoration}>
-          <MaterialIcons name="lock-outline" size={24} color={Colors.buttonColor} />
+          <MaterialIcons
+            name="lock-outline"
+            size={24}
+            color={Colors.buttonColor}
+          />
           <TextInput
             secureTextEntry={true}
             placeholderTextColor={Colors.buttonColor}
             placeholder="Your password"
             style={styles.inputText}
-            onChangeText={(data) => setValue({...value,password:data})}
+            onChangeText={(data) => setValue({ ...value, password: data })}
           />
         </View>
-
 
         <View style={styles.forgotpasscontainer}>
           {/* <View style={styles.switchContainer}>
@@ -185,18 +188,22 @@ const SignUpPage = ({ navigation }) => {
 
         <TouchableOpacity onPress={handleSignUp}>
           <View style={styles.buttonContainer}>
-            {isLoading ? <ActivityIndicator/>: <Text style={styles.buttonText}>Sign up</Text>} 
+            {isLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <Text style={styles.buttonText}>Sign up</Text>
+            )}
           </View>
         </TouchableOpacity>
 
-        <View style = {styles.lineContainer}>
-            <View style = {styles.line}/>
-            <Text style = {styles.paragraph}>or Signup With </Text>
-            <View style = {styles.line}/>
+        <View style={styles.lineContainer}>
+          <View style={styles.line} />
+          <Text style={styles.paragraph}>or Signup With </Text>
+          <View style={styles.line} />
         </View>
       </View>
 
-      <TouchableOpacity onPress={addDataToDocument}>
+      <TouchableOpacity>
         <View style={styles.googleButtonContainer}>
           <Image
             source={require("../../../../assets/images/google-logo.png")}
@@ -208,7 +215,9 @@ const SignUpPage = ({ navigation }) => {
 
       <View style={styles.alreadyTextContainer}>
         <Text style={styles.alreadyText}>Already have an Account?</Text>
-        <TouchableOpacity onPress={() => navigation.navigate(screenNames.login)}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate(screenNames.login)}
+        >
           <Text style={styles.signUpText}>Sign in</Text>
         </TouchableOpacity>
       </View>
@@ -235,24 +244,23 @@ const styles = StyleSheet.create({
   logoTxt: {
     fontSize: 35,
     color: "white",
-    margin:20,
+    margin: 20,
     letterSpacing: 1,
   },
-  line:{
-    borderWidth:0.5,
-    borderColor:"gray",
-    width:width*0.2,
-    margin:5
+  line: {
+    borderWidth: 0.5,
+    borderColor: "gray",
+    width: width * 0.2,
+    margin: 5,
   },
-  lineContainer:{
-    flexDirection:"row",
-    alignItems:"center",
-    justifyContent:"center"
+  lineContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   inputDecoration: {
-    
     margin: 10,
-    backgroundColor:"rgba(37, 176, 243,0.1)",
+    backgroundColor: "rgba(37, 176, 243,0.1)",
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -261,22 +269,20 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 25,
-    
-    marginTop: 20,
-    marginLeft:30,
-    color: "white",
 
+    marginTop: 20,
+    marginLeft: 30,
+    color: "white",
   },
   paragraph: {
     marginTop: 5,
-    marginLeft:20,
+    marginLeft: 20,
     color: "gray",
-
   },
   inputText: {
     padding: 10,
     flex: 1,
-    color:Colors.buttonColor
+    color: Colors.buttonColor,
   },
   signinText: {
     fontSize: 24,
@@ -350,7 +356,7 @@ const styles = StyleSheet.create({
   },
   alreadyText: {
     marginHorizontal: 10,
-    color:"white"
+    color: "white",
   },
 
   signUpText: {
@@ -361,10 +367,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     margin: 25,
-    
   },
-  rememberme:{
-    color:"white"
+  rememberme: {
+    color: "white",
   },
   error: {
     marginTop: 10,

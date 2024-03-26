@@ -8,10 +8,14 @@ export const screenNames = {
     onboarding:"onboarding",
     home:"home",
     search:"search",
-    favorite:"favorite",
+    properties:"properties",
     notification:"notification",
     profile:"profile",
     bottomflow:"bottomflow",
     propertiesDetail:"propertiesDetail",
-    confirmBookingPage:"confirmBookingPage"
+    confirmBookingPage:"confirmBookingPage",
+    addPropertyPage:"addPropertyPage",
+    propsFlow: "propsFLow",
+    paymentPage:"paymentPage",
+    updatePage:"updatePage"
 }
