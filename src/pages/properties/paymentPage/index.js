@@ -19,6 +19,9 @@ const StripeApp = (props) => {
   const [email, setEmail] = useState();
   const [cardDetails, setCardDetails] = useState();
   const userData = useSelector(state=>state.user)
+  const notificationFun = (title, type) => { return {
+    message:`Your appointment for ${title} is ${type}`
+  }}
   const { confirmPayment, loading } = useConfirmPayment();
  const dispatch = useDispatch();
   const SECRET_KEY = "sk_test_51Ox9ZCKrSiwlcSaVhF0ua9SFg64DPv4fmPhOxtmXZn5ze8k1wdTO0coWGFqq8x5rjsKNgycZD0l3XhQn5dKRWtMF00tcqCUr1F";
@@ -80,9 +83,7 @@ const StripeApp = (props) => {
         const filteredArr = userDataArr.filter(data=>data.uid !== userData.user.id);
         console.log("filter"+filteredArr.length);
         filteredArr.push(newUserData)
-        console.log("filter2"+filteredArr.length);
-        console.log("ref"+userArrRef);
-        console.log("oldL"+oldProperties.length);
+       
         oldProperties.forEach(element => {
             console.log("ele",element);
             console.log("loop"+element.title);
@@ -94,7 +95,7 @@ const StripeApp = (props) => {
         } catch (error) {
             console.log(error);
         }
-        console.log("Booking cancelled successfully.");
+        console.log("Porperty Added successfully.");
     } else {
         console.log("userArr document does not exist.");
     }

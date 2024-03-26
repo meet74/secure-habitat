@@ -9,7 +9,8 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  Pressable
 } from "react-native";
 import React, { useState, useRef,useEffect } from "react";
 import { Colors } from "../../constant/Colors";
@@ -29,6 +30,7 @@ import {firestore} from '../../config/firebase'
 import {doc,getDoc} from 'firebase/firestore'
 import { useDispatch, useSelector } from 'react-redux';
 import { storeDataInState } from "../../store/action/properties";
+import { screenNames } from "../../navigator/screennames";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -154,7 +156,7 @@ const HomeScreen = (props) => {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.inputDecoration}>
+        <TouchableOpacity onPress={()=> props.navigation.navigate(screenNames.search)} style={styles.inputDecoration}>
           <AntDesign
             name="search1"
             size={24}
@@ -163,24 +165,26 @@ const HomeScreen = (props) => {
           <TextInput
             placeholderTextColor={"rgba(37, 176, 243,0.6)"}
             placeholder="Search"
+            onPressIn={()=> props.navigation.navigate(screenNames.search)}
             style={styles.inputText}
-            onChangeText={setcity}
+            editable = {false}
+            
           />
-        </View>
+        </TouchableOpacity>
 
         <View style={styles.headerContainer}>
           <TouchableOpacity onPress={() =>  typeHandler("house")} style={styles.headerCard}>
-            <FontAwesome name="home" size={30} color={typeSelected === "house" ? Colors.buttonColor :"white"} />
-            <Text style={{color: typeSelected === "house" ? Colors.buttonColor :"white"}}>House</Text>
+            <FontAwesome name="home" size={30} color={"white"} />
+            <Text style={{color:"white"}}>House</Text>
           </TouchableOpacity>
           <TouchableOpacity  onPress={() =>  typeHandler("bunglow")} style={styles.headerCard}>
-            <MaterialCommunityIcons name="home-city" size={30}  color={typeSelected === "bunglow" ? Colors.buttonColor :"white"} />
+            <MaterialCommunityIcons name="home-city" size={30}  color={"white"} />
 
-            <Text style={{color: typeSelected === "bunglow" ? Colors.buttonColor :"white"}}>Bunglow</Text>
+            <Text style={{color:"white"}}>Bunglow</Text>
           </TouchableOpacity >
           <TouchableOpacity  onPress={() =>  typeHandler("apartment")} style={styles.headerCard}>
-            <MaterialIcons name="apartment" size={30}  color={typeSelected === "apartment" ? Colors.buttonColor :"white"} />
-            <Text style={{color: typeSelected === "apartment" ? Colors.buttonColor :"white"}}>Apartment</Text>
+            <MaterialIcons name="apartment" size={30}  color={"white"} />
+            <Text style={{color:"white"}}>Apartment</Text>
           </TouchableOpacity>
         </View>
 
@@ -285,6 +289,8 @@ const styles = StyleSheet.create({
   inputText: {
     padding: 10,
     flex: 1,
+    width:"100%",
+   
     color: Colors.buttonColor,
   },
   inputDecoration: {
