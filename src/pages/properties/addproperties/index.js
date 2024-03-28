@@ -5,7 +5,6 @@
     TextInput,
     TouchableOpacity,
     StyleSheet,
-    SafeAreaView,
     ScrollView,
     } from "react-native";
     import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
@@ -16,6 +15,8 @@
 import { firestore } from "../../../config/firebase";
 import { arrayUnion, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { screenNames } from "../../../navigator/screennames";
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
+
 
     const AddPropertyScreen = (props) => {
 
@@ -282,6 +283,7 @@ import { screenNames } from "../../../navigator/screennames";
     },
     viewContainer: {
         margin: 10,
+        marginTop:40
     },
     header: {
         fontSize: 24,

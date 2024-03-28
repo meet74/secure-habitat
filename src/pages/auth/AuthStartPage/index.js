@@ -1,4 +1,4 @@
-import { View, Text,StyleSheet,Image,Dimensions,TouchableOpacity } from 'react-native'
+import { View, Text,StyleSheet,Image,Dimensions,TouchableOpacity, Alert } from 'react-native'
 import React from 'react'
 import { Colors } from '../../../constant/Colors';
 import { Fontisto } from '@expo/vector-icons';
@@ -25,7 +25,7 @@ const AuthStartupPage = ({navigation}) => {
             <View style = {styles.line}/>
         </View>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => Alert.alert("This Feature is coming soon!!!")}>
           <View style={styles.googleButtonContainer}>
             <Image
               source={require("../../../../assets/images/google-logo.png")}

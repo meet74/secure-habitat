@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
-  SafeAreaView,
   Image,
   StyleSheet,
   Dimensions,
@@ -13,7 +12,7 @@ import {
 } from "react-native";
 import { Colors } from "../../constant/Colors";
 import { screenNames } from "../../navigator/screennames";
-
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
 
  // Dimensions of the screen
  const { width, height } = Dimensions.get("window");

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, ScrollView } from "react-native";
 import { CardField, StripeProvider, useConfirmPayment } from "@stripe/stripe-react-native";
 import { Colors } from "../../../constant/Colors";
 import Receipt from "../../../components/Reciept";
@@ -8,6 +8,7 @@ import { firestore } from "../../../config/firebase";
 import { arrayUnion, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { useDispatch, useSelector } from "react-redux";
 import { set_props } from "../../../store/action/user";
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
 
 //ADD localhost address of your server
 const API_URL = "http://localhost:3000";
@@ -143,7 +144,8 @@ const StripeApp = (props) => {
 
   return (
     <StripeProvider publishableKey={PUBLISHABLE_KEY}>
-    <View style={styles.container}>
+
+    <ScrollView contentContainerStyle={styles.container}>
     <View style={styles.imgContainer}>
         <Image
           source={require("../../../../assets/images/logo.png")}
@@ -151,29 +153,33 @@ const StripeApp = (props) => {
         />
         <Text style={styles.logoTxt}>Secure Habitat</Text>
       </View>
-      <Receipt/>
-      <TextInput
-        autoCapitalize="none"
-        placeholder="E-mail"
-        keyboardType="email-address"
-        onChange={value => setEmail(value.nativeEvent.text)}
-        style={styles.input}
-      />
+      
+     
       <CardField
         postalCodeEnabled={true}
         placeholder={{
           number: "4242 4242 4242 4242",
         }}
+      
         cardStyle={styles.card}
         style={styles.cardContainer}
         onCardChange={cardDetails => {
           setCardDetails(cardDetails);
         }}
       />
+      <TextInput
+        autoCapitalize="none"
+        placeholder="E-mail"
+        keyboardType="email-address"
+         
+        onChange={value => setEmail(value.nativeEvent.text)}
+        style={styles.input}
+      />
+      <Receipt/>
       <TouchableOpacity disabled = {loading} style={styles.addButton} onPress={handlePayPress}>
             <Text style={styles.buttonText}>Pay Now</Text>
             </TouchableOpacity>
-    </View>
+    </ScrollView>
     </StripeProvider>
   );
 };

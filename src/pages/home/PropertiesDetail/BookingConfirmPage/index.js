@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -13,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../../../../constant/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { screenNames } from "../../../../navigator/screennames";
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get("screen");
 

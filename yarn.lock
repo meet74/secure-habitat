@@ -6028,7 +6028,7 @@
   "resolved" "https://registry.npmjs.org/react-native-raw-bottom-sheet/-/react-native-raw-bottom-sheet-2.2.1.tgz"
   "version" "2.2.1"
 
-"react-native-safe-area-context@>= 3.0.0", "react-native-safe-area-context@4.8.2":
+"react-native-safe-area-context@^4.8.2", "react-native-safe-area-context@>= 3.0.0":
   "integrity" "sha512-ffUOv8BJQ6RqO3nLml5gxJ6ab3EestPiyWekxdzO/1MQ7NF8fW1Mzh1C5QE9yq573Xefnc7FuzGXjtesZGv7cQ=="
   "resolved" "https://registry.npmjs.org/react-native-safe-area-context/-/react-native-safe-area-context-4.8.2.tgz"
   "version" "4.8.2"

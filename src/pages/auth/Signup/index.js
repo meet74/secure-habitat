@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  SafeAreaView,
   Image,
   StyleSheet,
   Dimensions,
@@ -12,6 +11,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
 import { Colors } from "../../../constant/Colors";
 import {
   MaterialCommunityIcons,
@@ -203,7 +203,7 @@ const SignUpPage = ({ navigation }) => {
         </View>
       </View>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => Alert.alert("This Feature is coming soon!!!")}>
         <View style={styles.googleButtonContainer}>
           <Image
             source={require("../../../../assets/images/google-logo.png")}
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 40,
   },
   logoImg: {
     height: 100,

@@ -7,6 +7,7 @@ export const SET_PROPS = "SET_PROPS";
 export const UPDATE_PROPS = "UPDATE_PROPS"
 export const DELETE_PROPS = "DELETE_PROPS"
 export const ADD_NOTIFICATIONS = "ADD_NOTIFICATIONS"
+export const REMOVE_NOTIFICATION = "REMOVE_NOTIFICATION"
 export const SIGN_OUT = "SIGN_OUT"
 
 export const get_fav = () => {
@@ -110,7 +111,12 @@ export const add_notifications = (notification) => {
   }
 }
 
-
+export const remove_notifications = (nid) => {
+  return{
+    type:REMOVE_NOTIFICATION,
+    nid
+  }
+}
 
 export const signOutUser = () => {
   return{

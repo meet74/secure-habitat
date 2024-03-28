@@ -1,10 +1,11 @@
-import { View, Text, SafeAreaView, StyleSheet, Image, TouchableOpacity,Dimensions,ScrollView } from "react-native";
+import { View, Text,  StyleSheet, Image, TouchableOpacity,Dimensions,ScrollView } from "react-native";
 import React from "react";
 import { Colors } from "../../constant/Colors";
 import { screenNames } from "../../navigator/screennames";
 import {  useDispatch, useSelector } from "react-redux";
 import { signOutUser } from "../../store/action/user";
 import Card from "../../components/Card";
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
 
 
 const { width, height } = Dimensions.get("screen");
@@ -19,7 +20,7 @@ const ProfileScreen = (props) => {
   }
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView style = {{marginTop:40}}>
       <Text style={styles.headerText}>Your Profile</Text>
       <View style={styles.profile_container}>
         <Image

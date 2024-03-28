@@ -1,6 +1,5 @@
 import {
   FlatList,
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -8,6 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React from "react";
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
 import { Colors } from "../../constant/Colors";
 import { dummyData } from "../../constant/DummyData";
 import Card from "../../components/Card";
@@ -51,6 +51,7 @@ const PropertiesScreen = (props) => {
   };
   return (
     <SafeAreaView style={styles.container}>
+       <View style ={{marginTop:40}}>
       <GestureHandlerRootView>
        {
         userData.user.myprops.length ?  <FlatList
@@ -82,6 +83,7 @@ const PropertiesScreen = (props) => {
        }
        
       </GestureHandlerRootView>
+      </View>
     </SafeAreaView>
   );
 };

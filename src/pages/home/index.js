@@ -2,7 +2,6 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TextInput,
   Dimensions,
   Image,
@@ -13,6 +12,7 @@ import {
   Pressable
 } from "react-native";
 import React, { useState, useRef,useEffect } from "react";
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
 import { Colors } from "../../constant/Colors";
 import {
   Entypo,
@@ -141,7 +141,7 @@ const HomeScreen = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView style ={{marginTop:40}}>
         <View style={styles.header}>
           <TouchableOpacity activeOpacity={0.8} onPress={handleBottomSheet}>
             <Text style={styles.locationText}>Location</Text>

@@ -1,5 +1,4 @@
 import {
-  SafeAreaView,
   StyleSheet,
   Text,
   View,
@@ -10,6 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React from "react";
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
 import { Colors } from "../../../constant/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { screenNames } from "../../../navigator/screennames";
@@ -94,7 +94,7 @@ const PropertiesDetailScreen = (props) => {
   const handleCancel = async() => {
     const userArrRef = doc(firestore, "users", "usersArr");
     const userArrSnap = await getDoc(userArrRef);
-
+    
     if (userArrSnap.exists()) {
       // Update the userArr document's bookings array with the new booking
       const userDataArr = userArrSnap.data().users
@@ -106,7 +106,11 @@ const PropertiesDetailScreen = (props) => {
       const oldBookings = [...tempUser.bookings]
       const newBookings = oldBookings.filter(data=>data.id !== item.id)
       const oldNotificaitons = [...tempUser.notifications]
-      oldNotificaitons.push(notificationFun(item.address,"booked"))
+      const notiObj = {
+        nid:oldNotificaitons.length+2,
+        message:notificationFun(item.address,"cacelled")
+      }
+      oldNotificaitons.push(notiObj)
       console.log("book"+newBookings.length );
       const newUserData = {
        ...tempUser,
@@ -114,7 +118,7 @@ const PropertiesDetailScreen = (props) => {
        notifications:oldNotificaitons
       }
       dispatch(cancel_book(newBookings))
-      dispatch(add_notifications(notificationFun(item.address,"cancelled")))
+      dispatch(add_notifications(notiObj))
       const filteredArr = userDataArr.filter(data=>data.uid !== userData.user.id);
       console.log("filter"+filteredArr);
       filteredArr.push(newUserData)
@@ -136,7 +140,7 @@ const PropertiesDetailScreen = (props) => {
     
     const userArrRef = doc(firestore, "users", "usersArr");
     const userArrSnap = await getDoc(userArrRef);
-    dispatch(add_notifications(notificationFun(item.address,"booked")))
+    
     
     if (userArrSnap.exists()) {
       // Update the userArr document's bookings array with the new booking
@@ -149,12 +153,17 @@ const PropertiesDetailScreen = (props) => {
       const oldBookings = [...tempUser.bookings]
       oldBookings.push(item)
       const oldNotificaitons = [...tempUser.notifications]
-      oldNotificaitons.push(notificationFun(item.address,"booked"))
+      const notiObj = {
+        nid:oldNotificaitons.length+2,
+        message:notificationFun(item.address,"booked")
+      }
+      oldNotificaitons.push(notiObj)
       const newUserData = {
        ...tempUser,
        bookings:oldBookings,
        notifications:oldNotificaitons
       }
+      dispatch(add_notifications(notiObj))
       //console.log("new"+newUserData.bookings[0].address);
       const filteredArr = userDataArr.filter(data=>data.uid !== userData.user.id);
       console.log("filter"+filteredArr);

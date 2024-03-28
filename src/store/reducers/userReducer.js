@@ -3,6 +3,7 @@ import {
   CANCEL_BOOK,
   DELETE_PROPS,
   GET_FAVORITE,
+  REMOVE_NOTIFICATION,
   SET_BOOKINGS,
   SET_FAVORITE,
   SET_PROPS,
@@ -101,6 +102,17 @@ export default (state = initialState, action) => {
           mybooks:action.books
         }
       }
+      case REMOVE_NOTIFICATION:
+        const oldnotiarr = [...state.user.mynoti];
+        const newnotiarr = oldnotiarr.filter(data=>data.nid!==action.nid);
+       
+  
+        return{
+          user:{
+            ...state.user,
+            mynoti:newnotiarr
+          }
+        }
 
     case GET_FAVORITE:
       return {

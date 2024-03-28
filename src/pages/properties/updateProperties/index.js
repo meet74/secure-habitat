@@ -5,7 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
+  
   ScrollView,
 } from "react-native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
@@ -14,6 +14,7 @@ import { Colors } from "../../../constant/Colors";
 import { useDispatch, useSelector } from "react-redux";
 import { delete_props, set_props, update_props } from "../../../store/action/user";
 import { firestore } from "../../../config/firebase";
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
 import {
   arrayUnion,
   collection,
@@ -444,6 +445,7 @@ const styles = StyleSheet.create({
   },
   viewContainer: {
     margin: 10,
+    marginTop:40
   },
   header: {
     fontSize: 24,

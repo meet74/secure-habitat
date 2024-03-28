@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  SafeAreaView,
   Image,
   StyleSheet,
   Dimensions,
@@ -19,6 +18,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { set_user } from "../../../store/action/user";
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get("screen");
 const LoginScreen = ({ navigation }) => {
@@ -163,7 +163,7 @@ const LoginScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => Alert.alert("This Feature is coming soon!!!")}>
         <View style={styles.googleButtonContainer}>
           <Image
             source={require("../../../../assets/images/google-logo.png")}
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 10,
+    marginTop: 40,
   },
   logoImg: {
     height: 100,

@@ -8,7 +8,6 @@ import { screenNames } from "./screennames";
 import AuthStartupPage from "../pages/auth/AuthStartPage";
 import Login from "../pages/auth/Login";
 import SignupPage from "../pages/auth/Signup";
-import ResetPasswordPage from "../pages/auth/ResetPassword";
 import OnBoarding from "../pages/onboarding/onboarding";
 import SearchScreen from "../pages/search";
 import NotificationScreen from "../pages/notification";
@@ -48,10 +47,7 @@ const Navigator = () => {
           name={screenNames.signup}
           component={SignupPage}
         />
-        <AuthNavigator.Screen
-          name={screenNames.resetpassword}
-          component={ResetPasswordPage}
-        />
+        
       </AuthNavigator.Navigator>
     );
   };

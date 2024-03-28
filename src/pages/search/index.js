@@ -1,10 +1,11 @@
-import { View, Dimensions, SafeAreaView, StyleSheet, TextInput, FlatList } from 'react-native'
+import { View, Dimensions,  StyleSheet, TextInput, FlatList } from 'react-native'
 import React, { useState } from 'react'
 import { Colors } from '../../constant/Colors'
 import { AntDesign } from '@expo/vector-icons'
 import { dummyData } from '../../constant/DummyData'
 import GridCard from '../../components/GridCard'
 import { useSelector } from 'react-redux';
+import { SafeAreaProvider as SafeAreaView} from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('screen')
 
@@ -18,6 +19,7 @@ const SearchScreen = (props) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style ={{marginTop:40}}>
       <View style={styles.inputDecoration}>
         <AntDesign
           name="search1"
@@ -48,6 +50,7 @@ const SearchScreen = (props) => {
           }} />
         }}
       />
+      </View>
     </SafeAreaView>
   )
 }
@@ -55,7 +58,8 @@ const SearchScreen = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.primaryColor
+    backgroundColor: Colors.primaryColor,
+    
   },
   inputText: {
     padding: 10,
