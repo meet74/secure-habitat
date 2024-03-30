@@ -60,7 +60,7 @@ const PropertiesScreen = (props) => {
           return <Text style={styles.propertiesText}>Your Properties</Text>;
         }}
         ListFooterComponent={() => {
-          return  userData.user.myprops.length &&  <TouchableOpacity style={styles.btnContainer}>
+          return  userData.user.myprops.length &&  <TouchableOpacity style={styles.btnContainer} onPress={handleAddProperty}>
             <Text style={styles.btnText}>{"Add your properties"}</Text>
           </TouchableOpacity>
            

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TextInput, Image, Alert, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import { CardField, StripeProvider, useConfirmPayment } from "@stripe/stripe-react-native";
 import { Colors } from "../../../constant/Colors";
 import Receipt from "../../../components/Reciept";
@@ -28,7 +28,7 @@ const StripeApp = (props) => {
   const SECRET_KEY = "sk_test_51Ox9ZCKrSiwlcSaVhF0ua9SFg64DPv4fmPhOxtmXZn5ze8k1wdTO0coWGFqq8x5rjsKNgycZD0l3XhQn5dKRWtMF00tcqCUr1F";
   const fetchPaymentIntentClientSecret = async () => {
     console.log("Shreehari");
-    const response = await fetch(`${API_URL}/create-payment-intent?email=${email}`, {
+    const response = await fetch(`https://tempserver-g2dr.onrender.com/create-payment-intent`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -177,7 +177,7 @@ const StripeApp = (props) => {
       />
       <Receipt/>
       <TouchableOpacity disabled = {loading} style={styles.addButton} onPress={handlePayPress}>
-            <Text style={styles.buttonText}>Pay Now</Text>
+            {loading ?<ActivityIndicator/> :<Text style={styles.buttonText}>Pay Now</Text>}
             </TouchableOpacity>
     </ScrollView>
     </StripeProvider>
