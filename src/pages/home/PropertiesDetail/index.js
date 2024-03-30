@@ -107,7 +107,7 @@ const PropertiesDetailScreen = (props) => {
       const newBookings = oldBookings.filter(data=>data.id !== item.id)
       const oldNotificaitons = [...tempUser.notifications]
       const notiObj = {
-        nid:oldNotificaitons.length+2,
+        nid:Math.random(),
         message:notificationFun(item.address,"cacelled")
       }
       oldNotificaitons.push(notiObj)

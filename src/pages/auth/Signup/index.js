@@ -42,6 +42,7 @@ const SignUpPage = ({ navigation }) => {
       bookings: [],
       favorites: [],
       properties: [],
+      notifications:[],
       uid,
     };
 
