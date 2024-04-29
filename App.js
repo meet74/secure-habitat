@@ -7,6 +7,7 @@ import {Provider} from 'react-redux'
 import {store,persistor} from './src/store';
 
 export default function App() {
+  console.disableYellowBox = true; 
   return (
     <Provider store={store}>
       <PersistGate loading={<Text>Loading...</Text>} persistor={persistor}></PersistGate>
